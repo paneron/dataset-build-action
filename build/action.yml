@@ -1,0 +1,28 @@
+name: 'dataset-build-action'
+description: 'composite action which setup metanorma private GitHub packages for rubygems'
+inputs:
+  scaffolding:
+    description: 'Scaffolding repository'
+    required: false
+    default: paneron/glossary-site-scaffolding
+
+runs:
+  using: "composite"
+  steps:
+    # validation
+    - run: |
+        [ -d ${{ github.workspace }}/src -o  ] && echo "Repository contains any of: src/, package.json, static.config.js, yarn.lock" && exit -1
+
+    # copy build files
+    - run: |
+        git clone https://github.com/${{ inputs.scaffolding }} ${{ runner.temp }}/dataset-scaffolding
+        cp -r ${{ runner.temp }}/dataset-scaffolding/src ${{ github.workspace }}/
+        cp ${{ runner.temp }}/dataset-scaffolding/package.json ${{ github.workspace }}/
+        cp ${{ runner.temp }}/dataset-scaffolding/static.config.js ${{ github.workspace }}/
+        cp ${{ runner.temp }}/dataset-scaffolding/yarn.lock ${{ github.workspace }}/
+
+    # TODO handle templating
+
+    - run: yarn install
+
+    - run: yarn build
