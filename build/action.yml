@@ -5,19 +5,24 @@ inputs:
     description: 'Scaffolding repository'
     required: false
     default: paneron/glossary-site-scaffolding
+  path:
+    description: 'Path to the project'
+    required: false
 
 runs:
   using: "composite"
   steps:
     # validation
     - shell: bash
+      working-directory: ${{ inputs.path || github.workspace }}
       run: |
-        [ -d ${{ github.workspace }}/src -o -f package.json -o -f static.config.js -o -f yarn.lock ] \
+        [ -d ./src -o -f ./package.json -o -f ./static.config.js -o -f ./yarn.lock ] \
             && echo "Repository contains any of: src/, package.json, static.config.js, yarn.lock" \
             && exit -1
 
     # copy build files
     - shell: bash
+      working-directory: ${{ inputs.path || github.workspace }}
       run: |
         git clone https://github.com/${{ inputs.scaffolding }} ${{ runner.temp }}/dataset-scaffolding
         cp -r ${{ runner.temp }}/dataset-scaffolding/src ${{ github.workspace }}/
@@ -28,7 +33,9 @@ runs:
     # TODO handle templating
 
     - shell: bash
+      working-directory: ${{ inputs.path || github.workspace }}
       run: yarn install
 
     - shell: bash
+      working-directory: ${{ inputs.path || github.workspace }}
       run: yarn build
