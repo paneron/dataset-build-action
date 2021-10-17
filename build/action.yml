@@ -11,7 +11,9 @@ runs:
   steps:
     # validation
     - run: |
-        [ -d ${{ github.workspace }}/src -o  ] && echo "Repository contains any of: src/, package.json, static.config.js, yarn.lock" && exit -1
+        [ -d ${{ github.workspace }}/src -o -f package.json -o -f static.config.js -o -f yarn.lock ] \
+            && echo "Repository contains any of: src/, package.json, static.config.js, yarn.lock"
+            && exit -1
 
     # copy build files
     - run: |
