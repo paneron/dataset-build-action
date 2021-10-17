@@ -28,14 +28,14 @@ runs:
         AWS_ACCESS_KEY_ID: ${{ inputs.access-key-id }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.secret-access-key }}
       run: |
-        aws configure set default.s3.max_concurrent_requests 100
-        aws configure set default.s3.max_queue_size 10000
-        aws configure set default.s3.use_accelerate_endpoint true
-        aws configure set default.s3.payload_signing_enabled false
-        aws s3 sync ${{ inputs.content }} s3://${{ inputs.s3-bucket }} --region=${{ inputs.region }} --delete --no-progress --exclude "*" --include "*.html" --content-type "text/html; charset=utf-8"
-        aws s3 sync ${{ inputs.content }} s3://${{ inputs.s3-bucket }} --region=${{ inputs.region }} --delete --no-progress --exclude "*" --include "*.json" --content-type "application/json; charset=utf-8"
-        aws s3 sync ${{ inputs.content }} s3://${{ inputs.s3-bucket }} --region=${{ inputs.region }} --delete --no-progress --exclude "*" --include "*.jsonld" --content-type "application/ld+json; charset=utf-8"
-        aws s3 sync ${{ inputs.content }} s3://${{ inputs.s3-bucket }} --region=${{ inputs.region }} --delete --no-progress --exclude "*" --include "*.ttl" --content-type "text/turtle; charset=utf-8"
-        aws s3 sync ${{ inputs.content }} s3://${{ inputs.s3-bucket }} --region=${{ inputs.region }} --delete --no-progress --include "*" --exclude "*.html" --exclude "*.json" --exclude "*.jsonld" --exclude "*.ttl"
-        aws configure set preview.cloudfront true
-        aws cloudfront create-invalidation --distribution-id ${{ inputs.cloudfront-distribution-id }} --paths "/*"
+        echo aws configure set default.s3.max_concurrent_requests 100
+        echo aws configure set default.s3.max_queue_size 10000
+        echo aws configure set default.s3.use_accelerate_endpoint true
+        echo aws configure set default.s3.payload_signing_enabled false
+        echo aws s3 sync ${{ inputs.content }} s3://${{ inputs.s3-bucket }} --region=${{ inputs.region }} --delete --no-progress --exclude "*" --include "*.html" --content-type "text/html; charset=utf-8"
+        echo aws s3 sync ${{ inputs.content }} s3://${{ inputs.s3-bucket }} --region=${{ inputs.region }} --delete --no-progress --exclude "*" --include "*.json" --content-type "application/json; charset=utf-8"
+        echo aws s3 sync ${{ inputs.content }} s3://${{ inputs.s3-bucket }} --region=${{ inputs.region }} --delete --no-progress --exclude "*" --include "*.jsonld" --content-type "application/ld+json; charset=utf-8"
+        echo aws s3 sync ${{ inputs.content }} s3://${{ inputs.s3-bucket }} --region=${{ inputs.region }} --delete --no-progress --exclude "*" --include "*.ttl" --content-type "text/turtle; charset=utf-8"
+        echo aws s3 sync ${{ inputs.content }} s3://${{ inputs.s3-bucket }} --region=${{ inputs.region }} --delete --no-progress --include "*" --exclude "*.html" --exclude "*.json" --exclude "*.jsonld" --exclude "*.ttl"
+        echo aws configure set preview.cloudfront true
+        echo aws cloudfront create-invalidation --distribution-id ${{ inputs.cloudfront-distribution-id }} --paths "/*"
