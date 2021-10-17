@@ -10,13 +10,15 @@ runs:
   using: "composite"
   steps:
     # validation
-    - run: |
+    - shell: bash
+      run: |
         [ -d ${{ github.workspace }}/src -o -f package.json -o -f static.config.js -o -f yarn.lock ] \
             && echo "Repository contains any of: src/, package.json, static.config.js, yarn.lock"
             && exit -1
 
     # copy build files
-    - run: |
+    - shell: bash
+      run: |
         git clone https://github.com/${{ inputs.scaffolding }} ${{ runner.temp }}/dataset-scaffolding
         cp -r ${{ runner.temp }}/dataset-scaffolding/src ${{ github.workspace }}/
         cp ${{ runner.temp }}/dataset-scaffolding/package.json ${{ github.workspace }}/
@@ -25,6 +27,8 @@ runs:
 
     # TODO handle templating
 
-    - run: yarn install
+    - shell: bash
+      run: yarn install
 
-    - run: yarn build
+    - shell: bash
+      run: yarn build

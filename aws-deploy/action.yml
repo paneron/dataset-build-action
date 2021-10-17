@@ -1,0 +1,42 @@
+name: 'aws-deploy-action'
+description: 'composite action which setup metanorma private GitHub packages for rubygems'
+inputs:
+  content:
+    description: 'Path on filesystem to upload to S3'
+    required: false
+    default: dist
+  access-key-id:
+    description: 'AWS access key ID'
+    required: true
+  secret-access-key:
+    description: 'AWS secret access key'
+    required: true
+  region: 
+    description: 'AWS region'
+    required: true
+  s3-bucket:
+    description: 'AWS S3 bucket name'
+    required: true
+  cloudfront-distribution-id:
+    description: 'CloudFront distribution ID'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      env:
+        AWS_ACCESS_KEY_ID: ${{ inputs.access-key-id }}
+        AWS_SECRET_ACCESS_KEY: ${{ inputs.secret-access-key }}
+      run: |
+        echo aws configure set default.s3.max_concurrent_requests 100
+        echo aws configure set default.s3.max_queue_size 10000
+        echo aws configure set default.s3.use_accelerate_endpoint true
+        echo aws configure set default.s3.payload_signing_enabled false
+        echo aws s3 sync ${{ inputs.content }} s3://${{ inputs.s3-bucket }} --region=${{ inputs.region }} --delete --no-progress --exclude "*" --include "*.html" --content-type "text/html; charset=utf-8"
+        echo aws s3 sync ${{ inputs.content }} s3://${{ inputs.s3-bucket }} --region=${{ inputs.region }} --delete --no-progress --exclude "*" --include "*.json" --content-type "application/json; charset=utf-8"
+        echo aws s3 sync ${{ inputs.content }} s3://${{ inputs.s3-bucket }} --region=${{ inputs.region }} --delete --no-progress --exclude "*" --include "*.jsonld" --content-type "application/ld+json; charset=utf-8"
+        echo aws s3 sync ${{ inputs.content }} s3://${{ inputs.s3-bucket }} --region=${{ inputs.region }} --delete --no-progress --exclude "*" --include "*.ttl" --content-type "text/turtle; charset=utf-8"
+        echo aws s3 sync ${{ inputs.content }} s3://${{ inputs.s3-bucket }} --region=${{ inputs.region }} --delete --no-progress --include "*" --exclude "*.html" --exclude "*.json" --exclude "*.jsonld" --exclude "*.ttl"
+        echo aws configure set preview.cloudfront true
+        echo aws cloudfront create-invalidation --distribution-id ${{ inputs.cloudfront-distribution-id }} --paths "/*"
