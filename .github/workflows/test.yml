@@ -8,7 +8,6 @@ on:
 
 jobs:
   test-default:
-    name: Build site
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -19,14 +18,13 @@ jobs:
             exit -1
           fi
 
-          for f in "package.json static.config.js yarn.lock"; then
+          for f in "package.json static.config.js yarn.lock"; do
             if [ ! -f "./${f}" ]; then
               echo "::error::Repository missing ${f} file, which must be copied here from scafolding repo"
               exit -1
             fi
           done
   test-with-path:
-    name: Build site
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -39,7 +37,7 @@ jobs:
             exit -1
           fi
 
-          for f in "package.json static.config.js yarn.lock"; then
+          for f in "package.json static.config.js yarn.lock"; do
             if [ ! -f "./${f}" ]; then
               echo "::error::Repository missing ${f} file, which must be copied here from scafolding repo"
               exit -1
