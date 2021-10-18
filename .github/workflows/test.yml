@@ -1,0 +1,47 @@
+name: test
+
+on:
+  push:
+  - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test-default:
+    name: Build site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./build
+      - run: |
+          if [ ! -d "./src" ]; then
+            echo "::error::Repository missing src directory, which must be copied here from scafolding repo"
+            exit -1
+          fi
+
+          for f in "package.json static.config.js yarn.lock"; then
+            if [ ! -f "./${f}" ]; then
+              echo "::error::Repository missing ${f} file, which must be copied here from scafolding repo"
+              exit -1
+            fi
+          done
+  test-with-path:
+    name: Build site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./build
+        with:
+          path: ${{ github.workspace }}
+      - run: |
+          if [ ! -d "./src" ]; then
+            echo "::error::Repository missing src directory, which must be copied here from scafolding repo"
+            exit -1
+          fi
+
+          for f in "package.json static.config.js yarn.lock"; then
+            if [ ! -f "./${f}" ]; then
+              echo "::error::Repository missing ${f} file, which must be copied here from scafolding repo"
+              exit -1
+            fi
+          done

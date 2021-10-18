@@ -16,9 +16,17 @@ runs:
     - shell: bash
       working-directory: ${{ inputs.path || github.workspace }}
       run: |
-        [ -d ./src -o -f ./package.json -o -f ./static.config.js -o -f ./yarn.lock ] \
-            && echo "Repository contains any of: src/, package.json, static.config.js, yarn.lock" \
-            && exit -1
+        if [ -d "./src" ]; then
+          echo "::error::Repository contains src directory, but this conflicts with scafolding content"
+          exit -1
+        fi
+
+        for f in "package.json static.config.js yarn.lock"; then
+          if [ -f "./${f}" ]; then
+            echo "::error::Repository contains ${f} file, but this conflicts with scafolding content"
+            exit -1
+          fi
+        done
 
     # copy build files
     - shell: bash
