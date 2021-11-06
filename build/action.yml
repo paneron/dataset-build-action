@@ -3,8 +3,6 @@ description: 'composite action which setup metanorma private GitHub packages for
 inputs:
   scaffolding:
     description: 'Scaffolding repository'
-    required: false
-    default: paneron/glossary-site-scaffolding
   path:
     description: 'Path to the project'
     required: false
