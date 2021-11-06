@@ -12,6 +12,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./build
+        with:
+          scaffolding: paneron/glossary-site-scaffolding
       - run: |
           if [ ! -d "./src" ]; then
             echo "::error::Repository missing src directory, which must be copied here from scafolding repo"
@@ -30,6 +32,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: ./build
         with:
+          scaffolding: paneron/glossary-site-scaffolding
           path: ${{ github.workspace }}
       - run: |
           if [ ! -d "./src" ]; then
