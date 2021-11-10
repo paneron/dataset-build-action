@@ -6,6 +6,9 @@ inputs:
   path:
     description: 'Path to the project'
     required: false
+  optionsFile:
+    description: 'Path to options file (which used during templates processing) relative to "path"'
+    required: false
 
 runs:
   using: "composite"
@@ -32,15 +35,26 @@ runs:
       run: |
         git clone https://github.com/${{ inputs.scaffolding }} ${{ runner.temp }}/dataset-scaffolding
         cp -r ${{ runner.temp }}/dataset-scaffolding/src ${{ github.workspace }}/
-        cp ${{ runner.temp }}/dataset-scaffolding/package.json ${{ github.workspace }}/
-        cp ${{ runner.temp }}/dataset-scaffolding/static.config.js ${{ github.workspace }}/
-        cp ${{ runner.temp }}/dataset-scaffolding/yarn.lock ${{ github.workspace }}/
-
-    # TODO handle templating
+        for f in "package.json static.config.js yarn.lock"; then
+          cp ${{ runner.temp }}/dataset-scaffolding/$f ${{ github.workspace }}/ || echo "$f not eixsts in scaffolding"
+        done
 
     - shell: bash
       working-directory: ${{ inputs.path || github.workspace }}
       run: yarn install
+
+    - shell: bash
+      if: ${{ hashFiles(inputs.optionsFile) != '' }}
+      working-directory: ${{ inputs.path || github.workspace }}
+      run: |
+        yarn add mustache
+        for tmpl in ${{ runner.temp }}/**/*.tmpl; do
+          result=${tmpl#${{ runner.temp }}}
+          result=${result%.tmpl}
+          yarn mustache -p $tmpl ${{ inputs.optionsFile }} ${result}
+        done
+        for tmpl in ${{ runner.temp }}/dataset-scaffolding/; then
+        mustache -p path/to/somefile.someext.tmpl ${{ inputs.optionsFile }} path/to/somefile.someext
 
     - shell: bash
       working-directory: ${{ inputs.path || github.workspace }}
