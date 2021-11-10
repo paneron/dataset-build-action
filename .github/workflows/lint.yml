@@ -1,0 +1,17 @@
+name: lint
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+
+      - run: |
+          sudo apt-get install yamllint
+          yamllint build/action.yml
+          yamllint aws-deploy/action.yml
